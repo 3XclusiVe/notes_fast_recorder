@@ -1,18 +1,22 @@
 from pyhooked import Hook, KeyboardEvent, MouseEvent
+import time
 
-from audio_notes_recorder import user_handler
+from audio_notes_recorder import user_handler, start_recording, end_recording
 
+was_up_before = True;
 
 def handle_events(args):
-    ##print (args)
+    global was_up_before
+    #print (args.current_key)
     if isinstance(args, KeyboardEvent):
-        if args.current_key == 'Space' and args.event_type == 'key up' and 'Lcontrol' in args.pressed_key:
-            user_handler()
+        if args.current_key == 'Capital' and args.event_type == 'key down' and was_up_before:
+            was_up_before = False
+            start_recording()
 
-
-    if isinstance(args, MouseEvent):
-        if args.mouse_x == 300 and args.mouse_y == 400:
-            print("Mouse is at (300,400")
+        if args.current_key == 'Capital' and args.event_type == 'key up':
+            was_up_before = True
+            time.sleep(0.2)
+            end_recording()
 
 if __name__ == "__main__":
     hk = Hook()  # make a new instance of PyHooked
